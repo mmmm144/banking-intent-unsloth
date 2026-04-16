@@ -1,0 +1,5 @@
+model_dir: outputs/
+id2label:
+  "0": "0"
+  "1": "1"
+  "2": "2"

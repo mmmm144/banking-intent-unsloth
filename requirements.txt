@@ -1,0 +1,9 @@
+unsloth
+transformers<4.41.0
+datasets
+trl
+accelerate
+bitsandbytes
+scikit-learn
+pandas
+pyyaml

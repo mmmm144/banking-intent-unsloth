@@ -1,0 +1,29 @@
+from datasets import load_dataset
+import pandas as pd
+from sklearn.model_selection import train_test_split
+
+def main():
+    dataset = load_dataset("mteb/banking77")
+    df = pd.DataFrame(dataset["train"])
+
+    # 🔥 chọn top 25 label (bạn có thể đổi 30)
+    top_labels = df['label'].value_counts().head(25).index
+    df = df[df['label'].isin(top_labels)]
+
+    # normalize text
+    df['text'] = df['text'].str.lower().str.strip()
+
+    # convert label -> string (quan trọng)
+    df['label'] = df['label'].astype(str)
+
+    train_df, test_df = train_test_split(
+        df, test_size=0.2, random_state=42, stratify=df['label']
+    )
+
+    train_df.to_csv("train.csv", index=False)
+    test_df.to_csv("test.csv", index=False)
+
+    print("Done preprocessing!")
+
+if __name__ == "__main__":
+    main()
