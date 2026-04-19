@@ -64,6 +64,7 @@ def main():
             output_dir=os.path.join(base_dir, config["output_dir"]),
             save_strategy="epoch",
             eval_strategy="epoch",  # Cập nhật từ evaluation_strategy -> eval_strategy
+            average_tokens_across_devices=False,
         ),
     )
 
