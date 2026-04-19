@@ -13,8 +13,8 @@ def main():
     # normalize text
     df['text'] = df['text'].str.lower().str.strip()
 
-    # convert label -> string (quan trọng)
-    df['label'] = df['label'].astype(str)
+    # overwrite label with the actual intent text (quan trọng)
+    df['label'] = df['label_text']
 
     train_df, test_df = train_test_split(
         df, test_size=0.2, random_state=42, stratify=df['label']
