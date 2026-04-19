@@ -58,6 +58,7 @@ def main():
         max_seq_length=config["max_seq_length"],
         args=TrainingArguments(
             per_device_train_batch_size=config["batch_size"],
+            gradient_accumulation_steps=config.get("gradient_accumulation_steps", 4),
             learning_rate=float(config["learning_rate"]),
             num_train_epochs=config["epochs"],
             logging_steps=10,
