@@ -4,17 +4,9 @@ import os
 from unsloth import FastLanguageModel
 
 class IntentClassification:
-    def __init__(self, config_path):
-        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        full_config_path = os.path.join(base_dir, config_path)
-        config = yaml.safe_load(open(full_config_path))
-
-        model_dir = os.path.join(base_dir, config["model_dir"])
-        
-        # Sử dụng Unsloth cho mô hình generatvie (Llama) thay vì DistilBERT 
-        # Không dùng thủ công .to('cuda') trên model vì load_in_4bit tự xử lý
+    def __init__(self, model_path):
         self.model, self.tokenizer = FastLanguageModel.from_pretrained(
-            model_name=model_dir,
+            model_name=model_path,
             max_seq_length=128,
             load_in_4bit=True,
         )
@@ -45,7 +37,7 @@ class IntentClassification:
 
 # TEST
 if __name__ == "__main__":
-    clf = IntentClassification("configs/inference.yaml")
+    clf = IntentClassification("outputs")
 
     msg = "I lost my card"
     print("Input:", msg)

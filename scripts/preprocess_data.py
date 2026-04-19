@@ -20,8 +20,13 @@ def main():
         df, test_size=0.2, random_state=42, stratify=df['label']
     )
 
-    train_df.to_csv("train.csv", index=False)
-    test_df.to_csv("test.csv", index=False)
+    import os
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    output_dir = os.path.join(base_dir, "sample_data")
+    os.makedirs(output_dir, exist_ok=True)
+
+    train_df.to_csv(os.path.join(output_dir, "train.csv"), index=False)
+    test_df.to_csv(os.path.join(output_dir, "test.csv"), index=False)
 
     print("Done preprocessing!")
 
