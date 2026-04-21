@@ -69,12 +69,7 @@ if __name__ == "__main__":
     # Chấm điểm (Scoring)
     acc = accuracy_score(y_true, y_pred)
     
-    # Lưu kết quả dự đoán ra file CSV
-    test_df['prediction'] = y_pred
-    preds_path = os.path.join(base_dir, "outputs", "test_predictions.csv")
-    os.makedirs(os.path.join(base_dir, "outputs"), exist_ok=True)
-    test_df.to_csv(preds_path, index=False)
-    print(f"\nĐã lưu kết quả dự đoán chi tiết tại: {preds_path}")
+
     
     print("\n" + "="*40)
     print("--- KẾT QUẢ ĐÁNH GIÁ (TEST RESULTS) ---")
@@ -104,9 +99,7 @@ if __name__ == "__main__":
         plt.xticks(rotation=90)
         plt.tight_layout()
         
-        cm_path = os.path.join(base_dir, "outputs", "confusion_matrix.png")
-        plt.savefig(cm_path, dpi=300, bbox_inches='tight')
-        print(f"Đã lưu biểu đồ Confusion Matrix tại: {cm_path}")
+        plt.show()
     except ImportError:
         print("\n[MẸO] Bạn có thể cài thêm matplotlib và seaborn để xuất hình ảnh ma trận nhầm lẫn:")
         print("pip install matplotlib seaborn")
