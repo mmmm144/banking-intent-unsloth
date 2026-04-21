@@ -6,14 +6,11 @@ def main():
     dataset = load_dataset("mteb/banking77")
     df = pd.DataFrame(dataset["train"])
 
-    # 🔥 chọn top 25 label (bạn có thể đổi 30)
     top_labels = df['label'].value_counts().head(25).index
     df = df[df['label'].isin(top_labels)]
 
-    # normalize text
     df['text'] = df['text'].str.lower().str.strip()
 
-    # overwrite label with the actual intent text (quan trọng)
     df['label'] = df['label_text']
 
     train_df, test_df = train_test_split(

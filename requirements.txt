@@ -7,3 +7,5 @@ bitsandbytes
 scikit-learn
 pandas
 pyyaml
+matplotlib
+seaborn

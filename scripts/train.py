@@ -64,7 +64,7 @@ def main():
             logging_steps=10,
             output_dir=os.path.join(base_dir, config["output_dir"]),
             save_strategy="epoch",
-            eval_strategy="epoch",  # Cập nhật từ evaluation_strategy -> eval_strategy
+            eval_strategy="epoch",  
             average_tokens_across_devices=False,
         ),
     )

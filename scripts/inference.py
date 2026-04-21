@@ -4,7 +4,6 @@ import os
 import warnings
 from unsloth import FastLanguageModel
 
-# Tắt tất cả các cảnh báo (warnings) để kết quả in ra terminal được gọn gàng
 warnings.filterwarnings("ignore")
 
 class IntentClassification:
@@ -86,7 +85,6 @@ if __name__ == "__main__":
         from sklearn.metrics import confusion_matrix
         
         print("Đang vẽ biểu đồ Confusion Matrix...")
-        # Lấy danh sách các nhãn duy nhất (từ cả y_true và y_pred để ma trận vuông/đủ kích thước)
         labels = sorted(list(set(y_true) | set(y_pred)))
         cm = confusion_matrix(y_true, y_pred, labels=labels)
         
