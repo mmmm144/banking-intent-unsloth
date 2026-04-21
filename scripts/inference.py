@@ -1,7 +1,11 @@
 import torch
 import yaml
 import os
+import warnings
 from unsloth import FastLanguageModel
+
+# Tắt tất cả các cảnh báo (warnings) để kết quả in ra terminal được gọn gàng
+warnings.filterwarnings("ignore")
 
 class IntentClassification:
     def __init__(self, model_path):
@@ -31,6 +35,8 @@ class IntentClassification:
         decoded_output = self.tokenizer.batch_decode(outputs, skip_special_tokens=True)[0]
         # Lấy phần intent được model generate
         prediction = decoded_output.split("Output: ")[-1].strip()
+        # Xóa các dấu câu dư thừa ở cuối do model sinh lỗi
+        prediction = prediction.strip("?.!")
         
         return prediction
 
@@ -47,7 +53,8 @@ if __name__ == "__main__":
     test_df = pd.read_csv(test_path)
     
     print("Đang nạp Model từ logs...")
-    clf = IntentClassification("outputs")
+    model_path = os.path.join(base_dir, "outputs")
+    clf = IntentClassification(model_path)
 
     print(f"Bắt đầu chấm điểm {len(test_df)} mẫu test... (quá trình này mất vài phút trên Kaggle)")
     y_true = test_df['label'].tolist()
@@ -62,9 +69,44 @@ if __name__ == "__main__":
     # Chấm điểm (Scoring)
     acc = accuracy_score(y_true, y_pred)
     
+    # Lưu kết quả dự đoán ra file CSV
+    test_df['prediction'] = y_pred
+    preds_path = os.path.join(base_dir, "outputs", "test_predictions.csv")
+    os.makedirs(os.path.join(base_dir, "outputs"), exist_ok=True)
+    test_df.to_csv(preds_path, index=False)
+    print(f"\nĐã lưu kết quả dự đoán chi tiết tại: {preds_path}")
+    
     print("\n" + "="*40)
     print("--- KẾT QUẢ ĐÁNH GIÁ (TEST RESULTS) ---")
     print("="*40)
     print(f"Độ chính xác (Accuracy): {acc * 100:.2f}%\n")
     print("Báo cáo phân loại chi tiết (Classification Report):")
-    print(classification_report(y_true, y_pred))
+    # Thêm zero_division=0 để tránh báo lỗi UndefinedMetricWarning
+    print(classification_report(y_true, y_pred, zero_division=0))
+    
+    # Vẽ Confusion Matrix
+    try:
+        import matplotlib.pyplot as plt
+        import seaborn as sns
+        from sklearn.metrics import confusion_matrix
+        
+        print("Đang vẽ biểu đồ Confusion Matrix...")
+        # Lấy danh sách các nhãn duy nhất (từ cả y_true và y_pred để ma trận vuông/đủ kích thước)
+        labels = sorted(list(set(y_true) | set(y_pred)))
+        cm = confusion_matrix(y_true, y_pred, labels=labels)
+        
+        plt.figure(figsize=(24, 20))
+        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
+                    xticklabels=labels, yticklabels=labels)
+        plt.title('Confusion Matrix of Intent Classification', fontsize=20)
+        plt.ylabel('True Intent', fontsize=16)
+        plt.xlabel('Predicted Intent', fontsize=16)
+        plt.xticks(rotation=90)
+        plt.tight_layout()
+        
+        cm_path = os.path.join(base_dir, "outputs", "confusion_matrix.png")
+        plt.savefig(cm_path, dpi=300, bbox_inches='tight')
+        print(f"Đã lưu biểu đồ Confusion Matrix tại: {cm_path}")
+    except ImportError:
+        print("\n[MẸO] Bạn có thể cài thêm matplotlib và seaborn để xuất hình ảnh ma trận nhầm lẫn:")
+        print("pip install matplotlib seaborn")
