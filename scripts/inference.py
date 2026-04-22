@@ -51,11 +51,25 @@ if __name__ == "__main__":
     print(f"Đang nạp file dữ liệu test: {test_path}")
     test_df = pd.read_csv(test_path)
     
-    print("Đang nạp Model từ logs...")
+    print("\n" + "="*40)
+    print("--- STEP 1: LOADING TRAINED MODEL ---")
+    print("="*40)
     model_path = os.path.join(base_dir, "outputs")
     clf = IntentClassification(model_path)
+    print("Model loaded successfully!\n")
 
-    print(f"Bắt đầu chấm điểm {len(test_df)} mẫu test... (quá trình này mất vài phút trên Kaggle)")
+    print("="*40)
+    print("--- STEP 2: EXAMPLE INFERENCE DEMO ---")
+    print("="*40)
+    example_msg = "I think I lost my credit card, can you help me block it?"
+    print(f"Input Message: '{example_msg}'")
+    example_pred = clf(example_msg)
+    print(f"Predicted Intent Label: {example_pred}") 
+    print("-" * 40 + "\n")
+
+    print("="*40)
+    print(f"--- STEP 3: EVALUATING FULL TEST SET ({len(test_df)} samples) ---")
+    print("="*40)
     y_true = test_df['label'].tolist()
     y_pred = []
     
@@ -71,9 +85,9 @@ if __name__ == "__main__":
 
     
     print("\n" + "="*40)
-    print("--- KẾT QUẢ ĐÁNH GIÁ (TEST RESULTS) ---")
+    print("--- STEP 4: FINAL TEST RESULTS ---")
     print("="*40)
-    print(f"Độ chính xác (Accuracy): {acc * 100:.2f}%\n")
+    print(f"FINAL ACCURACY ON TEST SET: {acc * 100:.2f}%\n")
     print("Báo cáo phân loại chi tiết (Classification Report):")
     # Thêm zero_division=0 để tránh báo lỗi UndefinedMetricWarning
     print(classification_report(y_true, y_pred, zero_division=0))
@@ -99,5 +113,4 @@ if __name__ == "__main__":
         
         plt.show()
     except ImportError:
-        print("\n[MẸO] Bạn có thể cài thêm matplotlib và seaborn để xuất hình ảnh ma trận nhầm lẫn:")
         print("pip install matplotlib seaborn")
